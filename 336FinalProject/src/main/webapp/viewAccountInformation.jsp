@@ -45,6 +45,8 @@
 			out.println("SSN: " + ssn + "<br>");
 			out.println("Role: " + role + "<br><br>");
 		}
+		
+		con.close();
 
 	} catch (Exception e) {
 		out.println(e.getMessage());

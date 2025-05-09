@@ -29,7 +29,7 @@
 		connectionPassword);
 
 		String depSql = "SELECT fa.Instance_ID, fs.Flight_Number, fs.Airline_ID, fa.Flight_Date, fs.Departure_Airport_ID, fs.Departure_Time, "
-		+ "fs.Arrival_Airport_ID, fs.Arrival_Time, fa.Seats_Available " + "FROM Flight_Schedule fs "
+		+ "fs.Arrival_Airport_ID, fs.Arrival_Time, fa.Seats_Available, fa.Base_Price " + "FROM Flight_Schedule fs "
 		+ "JOIN Flight_Avalibility fa ON fs.Flight_Number = fa.Flight_Number "
 		+ "WHERE fs.Departure_Airport_ID = ? " + "AND fs.Arrival_Airport_ID = ? ";
 
@@ -56,7 +56,7 @@
 		PreparedStatement retPs = null;
 		if (oneWay_roundTrip.equals("round trip")) {
 			returnSql = "SELECT fa.Instance_ID, fs.Flight_Number, fs.Airline_ID, fa.Flight_Date, fs.Departure_Airport_ID, fs.Departure_Time, "
-			+ "fs.Arrival_Airport_ID, fs.Arrival_Time, fa.Seats_Available " + "FROM Flight_Schedule fs "
+			+ "fs.Arrival_Airport_ID, fs.Arrival_Time, fa.Seats_Available, fa.Base_Price " + "FROM Flight_Schedule fs "
 			+ "JOIN Flight_Avalibility fa ON fs.Flight_Number = fa.Flight_Number "
 			+ "WHERE fs.Departure_Airport_ID = ? " + "AND fs.Arrival_Airport_ID = ? ";
 
@@ -94,14 +94,38 @@
 			String arrivalAirportID = rs.getString("Arrival_Airport_ID");
 			String arrivalTime = rs.getString("Arrival_Time");
 			int seatsAvailable = rs.getInt("Seats_Available");
+			Double basePrice = rs.getDouble("Base_Price");
 		%>
 		<label> <input type="radio" name="selectedDepartFlight"
 			value="<%=instanceID%>"> Flight: <%=flightNumber%> Airline:
 			<%=airlineID%> Date: <%=flightDate%> From: <%=departAirportID%>
 			Depart Time: <%=departTime%> To: <%=arrivalAirportID%> Arrival Time:
-			<%=arrivalTime%>
+			<%=arrivalTime%> 
+			Price: $<span class="priceDisplay"><%=basePrice%></span>
+			Class: <select name="departClass" onchange="updateDepartPrice(this)" required>
+			<option value="Economy" data-price="<%=basePrice%>">Economy</option>
+			<option value="Business" data-price="<%=basePrice + 50%>">Business</option>
+			<option value="First" data-price="<%=basePrice + 100%>">First</option>
+		</select>
+		<input type="hidden" name="departSelectedClass" value="Economy">
+  		<input type="hidden" name="departSelectedPrice" value="<%=basePrice%>">
 		</label></br>
-
+		
+		<script>
+		function updateDepartPrice(classSelected){
+			const selectedClass = classSelected.options[classSelected.selectedIndex];
+			const newPrice = selectedClass.getAttribute('data-price');
+			const flightClass = selectedClass.value
+			
+			const priceSpan = classSelected.closest('label').querySelector('.priceDisplay');
+			priceSpan.textContent = parseFloat(newPrice).toFixed(2);
+			
+			const hiddenClass = classSelected.closest('label').querySelector('input[name="departSelectedClass"]');
+			const hiddenPrice = classSelected.closest('label').querySelector('input[name="departSelectedPrice"]')
+			hiddenClass.value = flightClass;
+			hiddenPrice.value = newPrice;
+		}
+		</script>
 
 		<%
 		}
@@ -120,13 +144,39 @@
 			String returnArrivalAirportID = retRs.getString("Arrival_Airport_ID");
 			String returnArrivalTime = retRs.getString("Arrival_Time");
 			int returnSeatsAvailable = retRs.getInt("Seats_Available");
+			Double basePrice = retRs.getDouble("Base_Price");
+
 		%>
 		<label> <input type="radio" name="selectedReturnFlight"
 			value="<%=instanceID%>"> Flight: <%=returnFlightNumber%> Airline:
 			<%=returnAirlineID%> Date: <%=returnFlightDate%> From: <%=returnDepartAirportID%>
 			Depart Time: <%=returnDepartTime%> To: <%=returnArrivalAirportID%> Arrival Time:
 			<%=returnArrivalTime%>
+			Price: $<span class="priceDisplay"><%=basePrice%></span>
+			Class: <select name="returnClass" onchange="updateReturnPrice(this)" required>
+			<option value="Economy" data-price="<%=basePrice%>">Economy</option>
+			<option value="Business" data-price="<%=basePrice + 50%>">Business</option>
+			<option value="First" data-price="<%=basePrice + 100%>">First</option>
+		</select>
+ 	 	<input type="hidden" name="returnSelectedClass" value="Economy">
+  		<input type="hidden" name="returnSelectedPrice" value="<%=basePrice%>">
 		</label></br>
+		
+		<script>
+		function updateReturnPrice(classSelected){
+			const selectedClass = classSelected.options[classSelected.selectedIndex];
+			const newPrice = selectedClass.getAttribute('data-price');
+			const flightClass = selectedClass.value
+			
+			const priceSpan = classSelected.closest('label').querySelector('.priceDisplay');
+			priceSpan.textContent = parseFloat(newPrice).toFixed(2);
+			
+			const hiddenClass = classSelected.closest('label').querySelector('input[name="returnSelectedClass"]');
+			const hiddenPrice = classSelected.closest('label').querySelector('input[name="returnSelectedPrice"]')
+			hiddenClass.value = flightClass;
+			hiddenPrice.value = newPrice;
+		}
+		</script>
 
 
 		<%

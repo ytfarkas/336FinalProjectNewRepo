@@ -13,10 +13,16 @@
 
 	<%
 	String departInstanceID = request.getParameter("selectedDepartFlight");
+	String departClass = request.getParameter("departSelectedClass");
+	String departPrice = request.getParameter("departSelectedPrice");
 	String returnInstanceID = null;
+	String returnClass = null;
+	String returnPrice = null;
 
 	if (request.getParameter("selectedReturnFlight") != null) {
 		returnInstanceID = request.getParameter("selectedReturnFlight");
+		returnClass = request.getParameter("returnSelectedClass");
+		returnPrice = request.getParameter("returnSelectedPrice");
 	}
 
 	try {
@@ -62,7 +68,10 @@
 		out.println("Date: " + departFlightDate + "<br>");
 		out.println("From: " + departDepartAirportID + " at " + departDepartTime + "<br>");
 		out.println("To: " + departArrivalAirportID + " at " + departArrivalTime + "<br>");
-		out.println("Seats Available: " + departSeatsAvailable + "<br><br>");
+		out.println("Seats Available: " + departSeatsAvailable + "<br>");
+		out.println("Class Selected: " + departClass + "<br>");
+		out.println("Price: $" + departPrice + "<br><br>");
+		
 	}
 
 	if (request.getParameter("selectedReturnFlight") != null) {
@@ -85,24 +94,31 @@
 		out.println("Date: " + returnFlightDate + "<br>");
 		out.println("From: " + returnDepartAirportID + " at " + returnDepartTime + "<br>");
 		out.println("To: " + returnArrivalAirportID + " at " + returnArrivalTime + "<br>");
-		out.println("Seats Available: " + returnSeatsAvailable + "<br><br>");
+		out.println("Seats Available: " + returnSeatsAvailable + "<br>");
+		out.println("Class Selected: " + returnClass + "<br>");
+		out.println("Price: $" + returnPrice + "<br><br>");
 	}
 	}
 	%>
 	<form action="processBooking.jsp" method="post">
 		<input type="hidden" name="selectedDepartFlight"
 			value="<%=departInstanceID%>">
+		<input type="hidden" name="departSelectedClass" value="<%=departClass%>">
+		<input type="hidden" name="departSelectedPrice" value="<%=departPrice%>">
 		<%
 		if (returnInstanceID != null) {
 		%>
 		<input type="hidden" name="selectedReturnFlight"
 			value="<%=returnInstanceID%>">
+		<input type="hidden" name="returnSelectedClass" value="<%=returnClass%>">
+		<input type="hidden" name="returnSelectedPrice" value="<%=returnPrice%>">
 		<%
 		}
 		%>
 		<input type="submit" value="Confirm Booking">
 	</form>
 	<%
+	con.close();
 	} catch (Exception e) {
 	out.println(e.getMessage());
 	}

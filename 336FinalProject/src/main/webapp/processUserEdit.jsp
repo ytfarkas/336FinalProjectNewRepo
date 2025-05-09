@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*"%>
 <%
-String location = request.getParameter("location");
+String accountnumber = request.getParameter("accountNumber");
 String firstName = request.getParameter("firstName");
 String lastName = request.getParameter("lastName");
 String username = request.getParameter("username");
@@ -19,27 +19,22 @@ try {
 
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/336AirlineProject", connectionRoot, connectionPassword);
 	
+	PreparedStatement userEditSql = con.prepareStatement("UPDATE Account SET First_Name = ?, Last_Name = ?, Username = ?, Password = ?, SSN = ?, Role= ?" + 
+	"WHERE Account_Number = ?");
 	
-	PreparedStatement ps = con.prepareStatement("INSERT INTO Account (First_Name, Last_Name, Username, Password, SSN, Role)" + 
-	"VALUES (?, ?, ?, ?, ?, ?)");
-	
-	ps.setString(1, firstName);
-	ps.setString(2, lastName);	
-	ps.setString(3, username);	
-	ps.setString(4, password);	
-	ps.setString(5, ssn);
-	ps.setString(6, role);
-	ps.executeUpdate();
+	userEditSql.setString(1, firstName);
+	userEditSql.setString(2, lastName);	
+	userEditSql.setString(3, username);	
+	userEditSql.setString(4, password);	
+	userEditSql.setString(5, ssn);
+	userEditSql.setString(6, role);
+	userEditSql.setString(7, accountnumber);
+	userEditSql.executeUpdate();
 	
 	con.close();
-	if(location.equals("admin")){
-		response.sendRedirect("adminHome.jsp");
-		
-	}else if (location.equals("register")){
-		response.sendRedirect("login.jsp");
-
-	}
 	
+	response.sendRedirect("adminHome.jsp");
+
 	} catch (Exception e) {
 		out.println(e.getMessage());
 	}

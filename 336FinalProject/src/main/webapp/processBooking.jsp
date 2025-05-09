@@ -11,8 +11,15 @@
 <body>
 <%
 	String departInstanceID = request.getParameter("selectedDepartFlight");
+	String departPrice = request.getParameter("departSelectedPrice");
+	String departClass = request.getParameter("departSelectedClass");
+
 	String returnInstanceID = request.getParameter("selectedReturnflight");
-	int accountNumber = (Integer) session.getAttribute("user");		
+	String returnPrice = request.getParameter("returnSelectedPrice");
+	String returnClass = request.getParameter("returnSelectedClass");
+	
+	int accountNumber = (Integer) session.getAttribute("user");
+	
 	
 
 	try {
@@ -24,21 +31,25 @@
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/336AirlineProject", connectionRoot,
 		connectionPassword);
 		
-		String departBookingSql = "INSERT INTO Bookings (Account_Number, Instance_ID) VALUES (?, ?)";
+		String departBookingSql = "INSERT INTO Bookings (Account_Number, Instance_ID, Price, Class) VALUES (?, ?, ?, ?)";
 		
 		PreparedStatement departBooking = con.prepareStatement(departBookingSql);
 		departBooking.setInt(1, accountNumber);
 		departBooking.setInt(2, Integer.parseInt(departInstanceID));
+		departBooking.setDouble(3, Double.parseDouble(departPrice));
+		departBooking.setString(4, departClass);
 		departBooking.executeUpdate();
 		
 		String returnBookingSql = "";
 		PreparedStatement returnBooking = null;
 		if (returnInstanceID != null) {
-			returnBookingSql = "INSERT INTO Bookings (Account_Number, Instance_ID) VALUES (?, ?)";
+			returnBookingSql = "INSERT INTO Bookings (Account_Number, Instance_ID, Price, Class) VALUES (?, ?, ?, ?)";
 			
 			returnBooking = con.prepareStatement(returnBookingSql);
 			returnBooking.setInt(1, accountNumber);
 			returnBooking.setInt(2, Integer.parseInt(returnInstanceID));
+			returnBooking.setDouble(3, Double.parseDouble(returnPrice));
+			returnBooking.setString(4, returnClass);
 			returnBooking.executeUpdate();
 		}
 		%>
@@ -52,7 +63,7 @@
 		
 		
 		
-		
+	con.close();
 	} catch (Exception e) {
 		out.println(e.getMessage());
 		}
