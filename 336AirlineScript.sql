@@ -199,27 +199,31 @@ Instance_ID INT PRIMARY KEY AUTO_INCREMENT,
 Flight_Number VARCHAR(20),
 Flight_Date DATE,
 Aircraft_ID VARCHAR(20),
+Base_Price DECIMAL (10,2),
 Seats_Available INT,
 FOREIGN KEY (Flight_Number) REFERENCES Flight_Schedule(Flight_Number),
 FOREIGN KEY (Aircraft_ID) REFERENCES Aircraft(Aircraft_ID)
 );
 
-INSERT INTO Flight_Avalibility (Flight_Number, Flight_Date, Aircraft_ID, Seats_Available) VALUES
-('DA100', '2025-06-02', '0001', 45),
-('DA100', '2025-06-04', '0003', 35),
-('DA200', '2025-06-02', '0003', 35),
-('AA200', '2025-06-03', '0000', 50),
-('AA200', '2025-06-06', '0002', 40),
-('UA300', '2025-06-05', '0004', 30),
-('UA300', '2025-06-07', '0005', 25);
+INSERT INTO Flight_Avalibility (Flight_Number, Flight_Date, Aircraft_ID, Base_Price, Seats_Available) VALUES
+('DA100', '2025-06-02', '0001', 100.00, 45),
+('DA100', '2025-06-04', '0003', 100.00, 35),
+('DA200', '2025-06-02', '0003', 100.00, 35),
+('AA200', '2025-06-03', '0000', 100.00, 50),
+('AA200', '2025-06-06', '0002', 100.00, 40),
+('UA300', '2025-06-05', '0004', 100.00, 30),
+('UA300', '2025-06-07', '0005', 100.00, 25);
 
 CREATE TABLE Bookings(
 Account_Number INT,
 Instance_ID INT,
+Price DECIMAL(10,2),
+Class ENUM('Economy', 'Business', 'First'),
 PRIMARY KEY (Account_Number, Instance_ID),
 FOREIGN KEY (Account_Number) REFERENCES Account(Account_Number) ON DELETE CASCADE,
 FOREIGN KEY (Instance_ID) REFERENCES Flight_Avalibility(Instance_ID)
 );
+
 
 
 
